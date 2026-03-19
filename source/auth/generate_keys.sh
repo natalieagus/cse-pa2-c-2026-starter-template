@@ -9,7 +9,7 @@
 #   e.g. ./generate_keys.sh server
 #   produces: server_private_key.pem, server_certificate_request.csr
 #
-# The generated CSR uses the same subject fields as the Python version:
+# The generated CSR uses these subject fields:
 #   C=SG, ST=Singapore, L=Singapore, O=SUTD, CN=sutd.edu.sg
 
 SUFFIX="${1:-}"
