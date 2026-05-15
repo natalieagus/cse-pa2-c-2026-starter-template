@@ -51,8 +51,8 @@ source/ClientWithSecurityCP2.c           (student writes; not in starter)
 source/ServerWithSecurityCP2.c           (student writes; not in starter)
 source/common.h                          shared API (helpers + crypto wrappers)
 source/common.c                          shared implementation
-source/auth/cacsertificate.crt           CA certificate (trust anchor)
-source/auth/generate_keys.py             helper to mint server keys / CSRs
+auth/cacsertificate.crt           CA certificate (trust anchor)
+auth/generate_keys.py             helper to mint server keys / CSRs
 tests/unit/test_<name>.c                 unit tests (Unity)
 tests/integration/                       bash integration tests
 tests/integration/_lib.sh                shared helpers (not a test)
@@ -117,7 +117,7 @@ If a task seems to require modifying any of these, stop and ask the student.
 1. Cover normal cases, edge cases, and invalid input.
 1. Do NOT write tests that bind to a TCP port, spawn a server process, call `fork()`, `execv()`, `system()`, or read from stdin. Those are integration tests, covered separately by the student.
 1. For socket helpers, use `socketpair()` rather than real TCP.
-1. For crypto helpers, generate keys / data in-memory or load fixtures from `source/auth/`. Do not write fixtures to disk inside `tests/unit/`.
+1. For crypto helpers, generate keys / data in-memory or load fixtures from `auth/`. Do not write fixtures to disk inside `tests/unit/`.
 1. Mark each generated test function with a comment indicating it is an AI-generated draft.
 
 ## What to avoid

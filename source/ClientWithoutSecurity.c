@@ -12,7 +12,7 @@
  *   [MSG_CLOSE=2]
  */
 
-#include "common.h"
+#include "libs/common.h"
 
 int main(int argc, char *argv[])
 {
@@ -25,7 +25,11 @@ int main(int argc, char *argv[])
 
     /* Create TCP socket and connect to server */
     int sockfd = socket(AF_INET, SOCK_STREAM, 0);
-    if (sockfd < 0) { perror("socket"); return 1; }
+    if (sockfd < 0)
+    {
+        perror("socket");
+        return 1;
+    }
 
     struct sockaddr_in serv_addr;
     memset(&serv_addr, 0, sizeof(serv_addr));
@@ -33,34 +37,45 @@ int main(int argc, char *argv[])
     serv_addr.sin_port = htons(port);
 
     struct hostent *he = gethostbyname(server_address);
-    if (!he) { fprintf(stderr, "Cannot resolve host: %s\n", server_address); return 1; }
+    if (!he)
+    {
+        fprintf(stderr, "Cannot resolve host: %s\n", server_address);
+        return 1;
+    }
     memcpy(&serv_addr.sin_addr, he->h_addr_list[0], he->h_length);
 
-    if (connect(sockfd, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0) {
+    if (connect(sockfd, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0)
+    {
         perror("connect");
         return 1;
     }
     printf("Connected\n");
 
     /* Interactive file sending loop */
-    while (1) {
+    while (1)
+    {
         char filename[4096];
         printf("Enter a filename to send (enter -1 to exit):");
-        if (!fgets(filename, sizeof(filename), stdin)) break;
+        if (!fgets(filename, sizeof(filename), stdin))
+            break;
 
         /* Strip trailing newline */
         filename[strcspn(filename, "\n")] = '\0';
 
         /* Validate filename */
-        while (strcmp(filename, "-1") != 0) {
+        while (strcmp(filename, "-1") != 0)
+        {
             struct stat st;
-            if (stat(filename, &st) == 0 && S_ISREG(st.st_mode)) break;
+            if (stat(filename, &st) == 0 && S_ISREG(st.st_mode))
+                break;
             printf("Invalid filename. Please try again:");
-            if (!fgets(filename, sizeof(filename), stdin)) goto done;
+            if (!fgets(filename, sizeof(filename), stdin))
+                goto done;
             filename[strcspn(filename, "\n")] = '\0';
         }
 
-        if (strcmp(filename, "-1") == 0) {
+        if (strcmp(filename, "-1") == 0)
+        {
             send_int(sockfd, MSG_CLOSE);
             break;
         }
@@ -73,7 +88,11 @@ int main(int argc, char *argv[])
 
         /* Read the entire file into memory */
         FILE *fp = fopen(filename, "rb");
-        if (!fp) { perror("fopen"); continue; }
+        if (!fp)
+        {
+            perror("fopen");
+            continue;
+        }
         fseek(fp, 0, SEEK_END);
         long file_size = ftell(fp);
         fseek(fp, 0, SEEK_SET);

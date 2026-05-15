@@ -6,7 +6,7 @@
  * Compile with: -lssl -lcrypto
  */
 
-#include "common.h"
+#include "libs/common.h"
 
 /* ======================================================================
  * Integer <-> byte conversion

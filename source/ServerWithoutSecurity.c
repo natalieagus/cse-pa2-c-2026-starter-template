@@ -9,7 +9,7 @@
  * Received files are saved to recv_files/ with a "recv_" prefix.
  */
 
-#include "common.h"
+#include "libs/common.h"
 
 /* Global socket for SIGINT cleanup */
 static int server_fd = -1;
@@ -18,7 +18,8 @@ void sigint_handler(int sig)
 {
     (void)sig;
     printf("\nSIGINT or CTRL-C detected. Exiting gracefully\n");
-    if (server_fd >= 0) close(server_fd);
+    if (server_fd >= 0)
+        close(server_fd);
     exit(0);
 }
 
@@ -31,7 +32,11 @@ int main(int argc, char *argv[])
 
     /* Create listening socket */
     server_fd = socket(AF_INET, SOCK_STREAM, 0);
-    if (server_fd < 0) { perror("socket"); return 1; }
+    if (server_fd < 0)
+    {
+        perror("socket");
+        return 1;
+    }
 
     int opt = 1;
     setsockopt(server_fd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt));
@@ -48,28 +53,38 @@ int main(int argc, char *argv[])
     else
         inet_pton(AF_INET, address, &serv_addr.sin_addr);
 
-    if (bind(server_fd, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0) {
-        perror("bind"); return 1;
+    if (bind(server_fd, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0)
+    {
+        perror("bind");
+        return 1;
     }
     listen(server_fd, 1);
     printf("Server listening on %s:%d\n", address, port);
 
     /* Accept one client */
     int client_fd = accept(server_fd, NULL, NULL);
-    if (client_fd < 0) { perror("accept"); return 1; }
+    if (client_fd < 0)
+    {
+        perror("accept");
+        return 1;
+    }
     printf("Client connected.\n");
 
     char filename[4096] = {0};
 
-    while (1) {
+    while (1)
+    {
         /* Read 8-byte message type */
         unsigned char *type_buf = read_bytes(client_fd, INT_BYTES);
-        if (!type_buf) break;
+        if (!type_buf)
+            break;
         uint64_t msg_type = bytes_to_int(type_buf);
         free(type_buf);
 
-        switch (msg_type) {
-        case MSG_FILENAME: {
+        switch (msg_type)
+        {
+        case MSG_FILENAME:
+        {
             /* If the packet is for transferring the filename */
             printf("Receiving file...\n");
             unsigned char *len_buf = read_bytes(client_fd, INT_BYTES);
@@ -82,7 +97,8 @@ int main(int argc, char *argv[])
             free(fn_buf);
             break;
         }
-        case MSG_FILE_DATA: {
+        case MSG_FILE_DATA:
+        {
             /* If the packet is for transferring a chunk of the file */
             double start_time = get_time();
 
@@ -101,7 +117,8 @@ int main(int argc, char *argv[])
 
             /* Write the file with 'recv_' prefix */
             FILE *fp = fopen(outpath, "wb");
-            if (fp) {
+            if (fp)
+            {
                 fwrite(file_data, 1, file_len, fp);
                 fclose(fp);
             }
