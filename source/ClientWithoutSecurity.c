@@ -8,8 +8,6 @@
  *
  * Wire protocol (all lengths are 8-byte big-endian):
  *   [MSG_FILENAME=0][filename_len][filename_bytes]
- *   [MSG_FILE_DATA=1][data_len][data_bytes]
- *   [MSG_CLOSE=2]
  */
 
 #include "libs/common.h"
